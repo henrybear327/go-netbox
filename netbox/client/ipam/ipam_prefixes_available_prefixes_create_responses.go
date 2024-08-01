@@ -23,6 +23,7 @@ package ipam
 import (
 	"fmt"
 	"io"
+	"errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
@@ -45,20 +46,38 @@ func (o *IpamPrefixesAvailablePrefixesCreateReader) ReadResponse(response runtim
 		}
 		return result, nil
 	default:
-		result := NewIpamPrefixesAvailablePrefixesCreateDefault(response.Code())
-		if err := result.readResponse(response, consumer, o.formats); err != nil {
-			return nil, err
-		}
-		if response.Code()/100 == 2 {
-			return result, nil
-		}
-		return nil, result
+		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
 	}
 }
 
-// NewIpamPrefixesAvailablePrefixesCreateCreated creates a IpamPrefixesAvailablePrefixesCreateCreated with default headers values
-func NewIpamPrefixesAvailablePrefixesCreateCreated() *IpamPrefixesAvailablePrefixesCreateCreated {
-	return &IpamPrefixesAvailablePrefixesCreateCreated{}
+/* IpamPrefixesAvailablePrefixesCreateCreatedError describes a response with status code 201, with default header values.
+
+IpamPrefixesAvailablePrefixesCreateCreatedError ipam prefixes available prefixes create created.
+*/
+type IpamPrefixesAvailablePrefixesCreateCreatedError struct {
+	Payload []*models.Prefix
+}
+
+func (o *IpamPrefixesAvailablePrefixesCreateCreatedError) Error() string {
+	return fmt.Sprintf("[POST /ipam/prefixes/{id}/available-prefixes/][%d] ipamPrefixesAvailablePrefixesCreateCreated  %+v", 201, o.Payload)
+}
+
+func (o *IpamPrefixesAvailablePrefixesCreateCreatedError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+	var payload models.Prefix
+
+	// response payload
+	if err := consumer.Consume(response.Body(), &payload); err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+
+	o.Payload = append(o.Payload, &payload)
+
+	return nil
+}
+
+// NewIpamPrefixesAvailablePrefixesCreateCreated creates a IpamPrefixesAvailablePrefixesCreateCreatedError with default headers values.
+func NewIpamPrefixesAvailablePrefixesCreateCreated() *IpamPrefixesAvailablePrefixesCreateCreatedError {
+	return &IpamPrefixesAvailablePrefixesCreateCreatedError{}
 }
 
 /*
